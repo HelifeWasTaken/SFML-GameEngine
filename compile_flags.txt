@@ -1,0 +1,7 @@
+-W
+-Wall
+-Wextra
+-std=c++17
+-Wno-switch
+-I./include
+-I./imgui
