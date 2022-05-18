@@ -543,4 +543,76 @@ inline sf::Vector2i InputManager::getMousePosPixel(const sf::View &view = Game::
 {
     return Game::window().mapCoordsToPixel(vto<float, int>(getMousePos()), view);
 }
+
 }; // namespace engine
+
+namespace ImGui {
+
+    class BeginLock {
+    private:
+        const std::string _tag;
+    public:
+        template<typename ...Args>
+        BeginLock(const std::string& tag, Args&& ...args) : _tag(tag)
+        {
+            ImGui::Begin(_tag.c_str(), std::forward<Args>(args)...);
+        }
+
+        ~BeginLock()
+        {
+            ImGui::End();
+        }
+    };
+
+    class BeginChildLock {
+    private:
+        const std::string _tag;
+    public:
+        template<typename ...Args>
+        BeginChildLock(const std::string& tag, Args&& ...args) : _tag(tag)
+        {
+            ImGui::BeginChild(_tag.c_str(), std::forward<Args>(args)...);
+        }
+
+        ~BeginChildLock()
+        {
+            ImGui::EndChild();
+        }
+    };
+
+    class BeginMenuBarLock
+    {
+    private:
+        const std::string _tag;
+    public:
+        template<typename ...Args>
+        BeginMenuBarLock(const std::string& tag, Args&& ...args) : _tag(tag)
+        {
+            if (ImGui::BeginMenuBar(_tag.c_str(), std::forward<Args>(args)...) == false)
+                throw std::runtime_error("Could not load Begin Menu Bar Lock");
+        }
+
+        ~BeginMenuBarLock()
+        {
+            ImGui::EndMenuBar();
+        }
+    };
+
+    class BeginMenu
+    {
+    private:
+        const std::string _tag;
+    public:
+        template<typename ...Args>
+        BeginMenu(const std::string& tag, Args&& ...args) : _tag(tag)
+        {
+            if (ImGui::BeginMenu(_tag.c_str(), std::forward<Args>(args)...) == false)
+                throw std::runtime_error("Could not load Begin Menu Lock");
+        }
+
+        ~BeginMenu()
+        {
+            ImGui::EndMenu();
+        }
+    };
+}
