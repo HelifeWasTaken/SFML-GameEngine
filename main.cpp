@@ -35,9 +35,8 @@ class TestState : public engine::State
 
     void update() override
     {
-        ImGui::Begin("Test");
+        ImGui::BeginLock lock("Test");
         ImGui::Text("Hello World the first");
-        ImGui::End();
     }
 
     void draw(sf::RenderWindow &window) override
@@ -70,9 +69,24 @@ class TestState2 : public engine::State
 
     void update() override
     {
-        ImGui::Begin("Test");
-        ImGui::Text("Hello World 2");
-        ImGui::End();
+        bool some;
+        ImGui::BeginLock lockBegin("Test2", &some, ImGuiWindowFlags_MenuBar);
+        {
+            ImGui::EngineMenuBar([]() {
+                ImGui::EngineMenu("menu", []() {
+                    if (ImGui::MenuItem("Open..", "Ctrl+O")) {
+                        std::cout << "No Open..!" << std::endl;
+                    }
+                    if (ImGui::MenuItem("Save", "Ctrl+S")) {
+                        std::cout << "No Save!" << std::endl;
+                    }
+                    if (ImGui::MenuItem("Close", "Ctrl+W")) {
+                        std::cout << "Close!" << std::endl;
+                        game->changeState(-1);
+                    }
+                });
+            });
+        }
     }
 
     ENGINE_EMPTY_STATE_DRAW;

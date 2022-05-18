@@ -580,39 +580,22 @@ namespace ImGui {
         }
     };
 
-    class BeginMenuBarLock
+    template<typename F>
+    static inline void EngineMenuBar(const F& f)
     {
-    private:
-        const std::string _tag;
-    public:
-        template<typename ...Args>
-        BeginMenuBarLock(const std::string& tag, Args&& ...args) : _tag(tag)
-        {
-            if (ImGui::BeginMenuBar(_tag.c_str(), std::forward<Args>(args)...) == false)
-                throw std::runtime_error("Could not load Begin Menu Bar Lock");
-        }
+        if (ImGui::BeginMenuBar() == false)
+            return;
+        f();
+        ImGui::EndMenuBar();
+    }
 
-        ~BeginMenuBarLock()
-        {
-            ImGui::EndMenuBar();
-        }
-    };
-
-    class BeginMenu
+    template<typename F>
+    static inline void EngineMenu(const std::string& tag, const F& f, bool enabled=true)
     {
-    private:
-        const std::string _tag;
-    public:
-        template<typename ...Args>
-        BeginMenu(const std::string& tag, Args&& ...args) : _tag(tag)
-        {
-            if (ImGui::BeginMenu(_tag.c_str(), std::forward<Args>(args)...) == false)
-                throw std::runtime_error("Could not load Begin Menu Lock");
-        }
+        if (ImGui::BeginMenu(tag.c_str(), enabled) == false)
+            return;
+        f();
+        ImGui::EndMenu();
+    }
 
-        ~BeginMenu()
-        {
-            ImGui::EndMenu();
-        }
-    };
 }
